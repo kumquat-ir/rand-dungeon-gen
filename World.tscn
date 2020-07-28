@@ -10,6 +10,7 @@ script = ExtResource( 2 )
 transform = Transform( 0.882946, -0.359398, 0.302059, 0, 0.643398, 0.765532, -0.469475, -0.675923, 0.568085, 1.6438, 4.16602, 3.09151 )
 fov = 90.0
 
-[node name="base tiles" parent="." instance=ExtResource( 1 )]
+[node name="tiles" parent="." instance=ExtResource( 1 )]
 
-[node name="chunkpool" parent="." instance=ExtResource( 1 )]
+[node name="tile-metadata" parent="." instance=ExtResource( 1 )]
+chunkGroup = "frames"
