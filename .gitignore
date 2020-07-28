@@ -1,0 +1,11 @@
+# Import cache
+.import/
+
+# Binaries
+bin/
+build/
+lib/
+
+# Git API files
+git_api.gdnlib
+git_api.gdns
