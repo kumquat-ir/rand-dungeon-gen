@@ -1,8 +1,10 @@
 extends Spatial
 
+#this seems to be the fastest chunk size to deal with
 export (int) var chunkSizeX:int = 8
 export (int) var chunkSizeY:int = 8
 export (int) var chunkSizeZ:int = 8
+#which folder the chunks should look for mesh data in
 export (String) var chunkGroup:String = "tiles"
 var chunks:Array = []
 
@@ -10,11 +12,13 @@ enum {AXIS_X, AXIS_Y, AXIS_Z}
 enum {PLANE_YZ, PLANE_XZ, PLANE_XY}
 
 func _ready():
-	setPrism(5, 5, 5, -2, -2, -2, 1)
-	setPrism(3, 3, 3, -1, -1, -1, 2)
-	setSingle(0, 0, 0, 0)
+	pass
+#	setPrism(5, 5, 5, -2, -2, -2, 1)
+#	setPrism(3, 3, 3, -1, -1, -1, 2)
+#	setSingle(0, 0, 0, 0)
 
 #i really don't think i need this, keeping the base here in case i do
+#doesn't actually work rn
 func getWorldArr() -> Array:
 	var worldArr:Array = []
 	var cArrArr:Array = []
@@ -24,6 +28,10 @@ func getWorldArr() -> Array:
 	print(cArrArr)
 	print(worldArr)
 	return worldArr
+
+func getTileAt(x:int, y:int, z:int) -> int:
+	var chunkIn:Spatial = getChunk(normccoords(x, chunkSizeX), normccoords(y, chunkSizeY), normccoords(z, chunkSizeZ))
+	return chunkIn.getCArrVal(normval(x, chunkSizeX), normval(y, chunkSizeY), normval(z, chunkSizeZ))
 
 func updateFull():
 	var cArrArr = []
