@@ -51,6 +51,9 @@ func getCArrVal(x:int, y:int, z:int) -> int:
 		cArr[x][y].append(0)
 	return cArr[x][y][z]
 
+func tileExists(x:int, y:int, z:int) -> bool:
+	return len(cArr) > x and len(cArr[x]) > y and len(cArr[x][y]) > z
+
 #delete and rebuild the multimesh pool from newArr
 func updateFull(newArr:Array = cArr):
 	for child in get_children():

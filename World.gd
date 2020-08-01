@@ -54,8 +54,6 @@ func genStep():
 	if len(genHooks) == 0:
 		print("no hooks left to generate")
 		return
-	#proper hooks will stop evaluating on the first statement
-	#short-circuit eval ftw
 	if len(genHooks[0]) != 2 or len(genHooks[0][0]) != 4 or len(genHooks[0][1]) < 1:
 		printerr("malformed hook " + str(genHooks[0]) + ", removing")
 		genHooks.remove(0)
@@ -157,7 +155,6 @@ func chooseSidePass(x:int, y:int, z:int, dir:int):
 	pass
 
 #checks array of x/y/z coords to see if the space is open (tile-metadata is 0 or nonexistant)
-#TODO don't use getCArrVal in getTileAt because that bloats the chunks' arrays a lot
 func checkArray(arr:Array) -> bool:
 	for coords in arr:
 		if $"tile-metadata".getTileAt(coords[0], coords[1], coords[2]) != 0:
@@ -172,3 +169,61 @@ func prismArray(lx:int, ly:int, lz:int, sx:int, sy:int, sz:int) -> Array:
 			for z in range(min(lz, 0), max(lz, 0)):
 				arr.append([x + sx, y + sy, z + sz])
 	return arr
+
+func forward(amt:int, dir:int) -> Array:
+	match dir:
+		0:
+			return [amt, 0]
+		1:
+			return [0, amt]
+		2:
+			return [-amt, 0]
+		3:
+			return [0, -amt]
+	return [0, 0]
+
+func right(amt:int, dir:int) -> Array:
+	match dir:
+		0:
+			return [0, -amt]
+		1:
+			return [amt, 0]
+		2:
+			return [0, amt]
+		3:
+			return [-amt, 0]
+	return [0, 0]
+
+func left(amt:int, dir:int) -> Array:
+	match dir:
+		0:
+			return [0, amt]
+		1:
+			return [-amt, 0]
+		2:
+			return [0, -amt]
+		3:
+			return [amt, 0]
+	return [0, 0]
+
+func back(amt:int, dir:int) -> Array:
+	match dir:
+		0:
+			return [-amt, 0]
+		1:
+			return [0, -amt]
+		2:
+			return [amt, 0]
+		3:
+			return [0, amt]
+	return [0, 0]
+
+func dirSum1(amts:Array, xz: int, dir:int) -> int:
+	return forward(amts[0], dir)[xz] + right(amts[1], dir)[xz] + left(amts[2], dir)[xz] + back(amts[3], dir)[xz]
+
+func dirSum2(amts:Array, dir:int) -> Array:
+	var fwd = forward(amts[0], dir)
+	var rgt = right(amts[1], dir)
+	var lft = left(amts[2], dir)
+	var bck = back(amts[3], dir)
+	return [fwd[0] + rgt[0] + lft[0] + bck[0], fwd[1] + rgt[1] + lft[1] + bck[1]]

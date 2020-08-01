@@ -31,7 +31,9 @@ func getWorldArr() -> Array:
 
 func getTileAt(x:int, y:int, z:int) -> int:
 	var chunkIn:Spatial = getChunk(normccoords(x, chunkSizeX), normccoords(y, chunkSizeY), normccoords(z, chunkSizeZ))
-	return chunkIn.getCArrVal(normval(x, chunkSizeX), normval(y, chunkSizeY), normval(z, chunkSizeZ))
+	if chunkIn.tileExists(normval(x, chunkSizeX), normval(y, chunkSizeY), normval(z, chunkSizeZ)):
+		return chunkIn.getCArrVal(normval(x, chunkSizeX), normval(y, chunkSizeY), normval(z, chunkSizeZ))
+	return 0
 
 func updateFull():
 	var cArrArr = []
