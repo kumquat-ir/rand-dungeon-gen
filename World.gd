@@ -155,3 +155,20 @@ func choosePass(x:int, y:int, z:int, dir:int):
 
 func chooseSidePass(x:int, y:int, z:int, dir:int):
 	pass
+
+#checks array of x/y/z coords to see if the space is open (tile-metadata is 0 or nonexistant)
+#TODO don't use getCArrVal in getTileAt because that bloats the chunks' arrays a lot
+func checkArray(arr:Array) -> bool:
+	for coords in arr:
+		if $"tile-metadata".getTileAt(coords[0], coords[1], coords[2]) != 0:
+			return false
+	return true
+
+#to generate arrays for checkArray
+func prismArray(lx:int, ly:int, lz:int, sx:int, sy:int, sz:int) -> Array:
+	var arr = []
+	for x in range(min(lx, 0), max(lx, 0)):
+		for y in range(min(ly, 0), max(ly, 0)):
+			for z in range(min(lz, 0), max(lz, 0)):
+				arr.append([x + sx, y + sy, z + sz])
+	return arr
