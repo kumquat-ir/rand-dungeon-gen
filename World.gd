@@ -33,11 +33,23 @@ var genHooks:Array = [
 var rng:RandomNumberGenerator = RandomNumberGenerator.new()
 var setSeed = null #for testing
 
+enum {AXIS_X, AXIS_Y, AXIS_Z}
+enum {PLANE_YZ, PLANE_XZ, PLANE_XY}
+
 func _ready():
 	if setSeed == null:
 		rng.randomize()
 	else:
 		rng.set_seed(hash(setSeed))
+	for dir in range(4):
+		var dsl = dirSum2([5, 2, 0, 0], dir)
+		var dss = dirSum2([0, 4, 2, 0], dir)
+		print(prismArray(dsl[0], 3, dsl[1], dss[0], 0, dss[1]))
+		$tiles.setPrism(dsl[0], 3, dsl[1], dss[0], 0, dss[1], 2)
+	$"tile-metadata".setLine(AXIS_Y, 20, 0, -10, 0, 1)
+	$"tile-metadata".setLine(AXIS_X, 20, -10, 0, 0, 2)
+	$"tile-metadata".setLine(AXIS_Z, 20, 0, 0, -10, 3)
+	$"tile-metadata".setSingle(0, 0, 0, 0)
 
 func _process(_delta):
 	if Input.is_action_just_pressed("ui_accept"):
@@ -164,9 +176,9 @@ func checkArray(arr:Array) -> bool:
 #to generate arrays for checkArray
 func prismArray(lx:int, ly:int, lz:int, sx:int, sy:int, sz:int) -> Array:
 	var arr = []
-	for x in range(min(lx, 0), max(lx, 0)):
-		for y in range(min(ly, 0), max(ly, 0)):
-			for z in range(min(lz, 0), max(lz, 0)):
+	for x in range(min(lx + 1, 0), max(lx, 1)):
+		for y in range(min(ly + 1, 0), max(ly, 1)):
+			for z in range(min(lz + 1, 0), max(lz, 1)):
 				arr.append([x + sx, y + sy, z + sz])
 	return arr
 
@@ -219,11 +231,11 @@ func back(amt:int, dir:int) -> Array:
 	return [0, 0]
 
 func dirSum1(amts:Array, xz: int, dir:int) -> int:
-	return forward(amts[0], dir)[xz] + right(amts[1], dir)[xz] + left(amts[2], dir)[xz] + back(amts[3], dir)[xz]
+	return right(amts[0], dir)[xz] + forward(amts[1], dir)[xz] + left(amts[2], dir)[xz] + back(amts[3], dir)[xz]
 
 func dirSum2(amts:Array, dir:int) -> Array:
-	var fwd = forward(amts[0], dir)
-	var rgt = right(amts[1], dir)
+	var rgt = right(amts[0], dir)
+	var fwd = forward(amts[1], dir)
 	var lft = left(amts[2], dir)
 	var bck = back(amts[3], dir)
-	return [fwd[0] + rgt[0] + lft[0] + bck[0], fwd[1] + rgt[1] + lft[1] + bck[1]]
+	return [rgt[0] + fwd[0] + lft[0] + bck[0], rgt[1] + fwd[1] + lft[1] + bck[1]]

@@ -107,9 +107,9 @@ func setSingle(x:int, y:int, z:int, nval:int):
 #set a rect. prism of tiles
 #somehow this is the basic function for the other two
 func setPrism(lx:int, ly:int, lz:int, sx:int, sy:int, sz:int, nval:int):
-	for x in range(min(lx, 0), max(lx, 0)):
-		for y in range(min(ly, 0), max(ly, 0)):
-			for z in range(min(lz, 0), max(lz, 0)):
+	for x in range(min(lx + 1, 0), max(lx, 1)):
+		for y in range(min(ly + 1, 0), max(ly, 1)):
+			for z in range(min(lz + 1, 0), max(lz, 1)):
 				setSingle(x + sx, y + sy, z + sz, nval)
 
 #set a line of tiles along axis specified by AXIS_X, etc, starting at s[xyz]
