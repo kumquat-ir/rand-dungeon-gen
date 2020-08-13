@@ -27,7 +27,7 @@ extends Spatial
 #12:	choose side passage
 var genHooks:Array = [
 	[
-		[0, 0, 0, 1], [3]
+		[0, 0, 0, 4], [3]
 	]
 ]
 
@@ -75,16 +75,16 @@ func genStep():
 			genStart(x, y, z, dir)
 		1:
 			print("generating 5ft passage at " + str(x) +  "/" + str(y) + "/" + str(z) + "|" + str(dir))
-			gen5pass(x, y, z, dir)
+			genSmallPass(x, y, z, dir, 5, 1)
 		2:
 			print("generating 10ft passage at " + str(x) +  "/" + str(y) + "/" + str(z) + "|" + str(dir))
-			gen10pass(x, y, z, dir)
+			genSmallPass(x, y, z, dir, 10, 2)
 		3:
 			print("generating 20ft passage at " + str(x) +  "/" + str(y) + "/" + str(z) + "|" + str(dir))
-			gen20pass(x, y, z, dir)
+			genSmallPass(x, y, z, dir, 20, 3)
 		4:
 			print("generating 30ft passage at " + str(x) +  "/" + str(y) + "/" + str(z) + "|" + str(dir))
-			gen30pass(x, y, z, dir)
+			genSmallPass(x, y, z, dir, 30, 4)
 		5:
 			if len(genHooks[0][1] != 4):
 				printerr("malformed 40ft passage hook " +  str(genHooks[0]) + ", removing")
@@ -130,13 +130,15 @@ func genStep():
 func genStart(x:int, y:int, z:int, dir:int):
 	pass
 
-func gen5pass(x:int, y:int, z:int, dir:int):
+func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
+	var w = wid / 5
 	var exclude = [2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-	var bounds = dirSum2([3, 6, 0, 0], dir)
+	var bounds = dirSum2([2 + w, 6, 0, 0], dir)
 	var origin = dirSum2([0, 0, 1, 0], dir)
 	if not checkArray(prismArray(bounds[0], 3, bounds[1], origin[0] + x, y, origin[1] + z)):
 		exclude.append(1)
 		exclude.append(5)
+		exclude.append(10)
 	match roll(20, exclude):
 		1:
 			print("30ft straight, continue")
@@ -150,39 +152,30 @@ func gen5pass(x:int, y:int, z:int, dir:int):
 #			bounds = dirSum2([5, 6, 0, 0], dir)
 #			origin = dirSum2([0, 0, 2, 0], dir)
 #			$"tile-metadata".setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
-			passageBase([3, 7, 0, 0], x, y, z, dir)
+			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
 #			var disp = dirSum2([0, 6, 0, 0], dir)
 #			genHooks.append([
 #				[disp[0] + x, y, disp[1] + z, 1],
 #			[dir]])
-			newHooks([[0, 6, 0, 0]], [1], x, y, z, dir)
+			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
 		5:
 			print("20ft straight to door")
-			passageBase([3, 5, 0, 0], x, y, z, dir)
+			passageBase([2 + w, 5, 0, 0], x, y, z, dir)
 			newHooks([[0, 4, 0, 0]], [6], x, y, z, dir)
 		10:
 			print("20ft straight to possible secret door")
-			passageBase([3, 5, 0, 0], x, y, z, dir)
+			passageBase([2 + w, 5, 0, 0], x, y, z, dir)
 			if roll(10) == 10:
 				newHooks([[0, 4, 0, 0]], [6], x, y, z, dir, [[5]])
 			else:
-				bounds = dirSum2([3, 0, 0, 0], dir)
+				bounds = dirSum2([2 + w, 0, 0, 0], dir)
 				origin = dirSum2([0, 4, 1, 0], dir)
 				$tiles.setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
-				bounds = dirSum2([5, 2, 0, 0], dir)
+				bounds = dirSum2([4 + w, 2, 0, 0], dir)
 				origin = dirSum2([0, 4, 2, 0], dir)
 				$"tile-metadata".setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
 		_:
 			print("no space for anything")
-
-func gen10pass(x:int, y:int, z:int, dir:int):
-	pass
-
-func gen20pass(x:int, y:int, z:int, dir:int):
-	pass
-
-func gen30pass(x:int, y:int, z:int, dir:int):
-	pass
 
 func gen40pass(x:int, y:int, z:int, dir:int, pillar:int, h:int, gallery:bool):
 	pass
