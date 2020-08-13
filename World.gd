@@ -131,8 +131,8 @@ func genStart(x:int, y:int, z:int, dir:int):
 	pass
 
 func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
-	var w = wid / 5
-	var exclude = [2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+	var w:int = wid / 5
+	var exclude = [3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 	var bounds = dirSum2([2 + w, 6, 0, 0], dir)
 	var origin = dirSum2([0, 0, 1, 0], dir)
 	if not checkArray(prismArray(bounds[0], 3, bounds[1], origin[0] + x, y, origin[1] + z)):
@@ -140,28 +140,28 @@ func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
 		exclude.append(5)
 		exclude.append(10)
 	match roll(20, exclude):
-		1:
+		1, 2:
 			print("30ft straight, continue")
-#			bounds = dirSum2([3, 7, 0, 0], dir)
-#			origin = dirSum2([0, 0, 1, 0], dir)
-#			$tiles.setPlane(PLANE_XZ, bounds[0], bounds[1], origin[0] + x, y - 1, origin[1] + z, 2)
-#			bounds = dirSum2([0, 6, 0, 0], dir)
-#			$tiles.setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
-#			origin = dirSum2([1, 0, 0, 0], dir)
-#			$tiles.setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
-#			bounds = dirSum2([5, 6, 0, 0], dir)
-#			origin = dirSum2([0, 0, 2, 0], dir)
-#			$"tile-metadata".setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
 			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
-#			var disp = dirSum2([0, 6, 0, 0], dir)
-#			genHooks.append([
-#				[disp[0] + x, y, disp[1] + z, 1],
-#			[dir]])
 			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
+		3:
+			print("30ft straight, right door")
+			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
+			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
+			newHooks([[2 + w, 4, 0, 0]], [12], x, y, z, (dir + 1) % 4)
+		4:
+			print("30ft straight, left door")
+			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
+			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
+			newHooks([[0, 4, -1, 0]], [12], x, y, z, (dir + 1) % 4) #todo turn dir left somehow, idk
 		5:
 			print("20ft straight to door")
 			passageBase([2 + w, 5, 0, 0], x, y, z, dir)
 			newHooks([[0, 4, 0, 0]], [6], x, y, z, dir)
+		6, 7:
+			pass
+		8, 9:
+			pass
 		10:
 			print("20ft straight to possible secret door")
 			passageBase([2 + w, 5, 0, 0], x, y, z, dir)
@@ -174,6 +174,18 @@ func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
 				bounds = dirSum2([4 + w, 2, 0, 0], dir)
 				origin = dirSum2([0, 4, 2, 0], dir)
 				$"tile-metadata".setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
+		11, 12:
+			pass
+		13, 14:
+			pass
+		15, 16, 17, 18, 19:
+			print("chamber")
+			#placed on center-left of passage
+			newHooks([[(wid + 5) / 10 - 1, 0, 0, 0]], [8], x, y, z, dir)
+		20:
+			print("stairs")
+			#placed on center-left of passage
+			newHooks([[(wid + 5) / 10 - 1, 0, 0, 0]], [10], x, y, z, dir)
 		_:
 			print("no space for anything")
 
@@ -216,19 +228,20 @@ func passageBase(fbounds:Array, x:int, y:int, z:int, dir:int, h:int = 2):
 	var origin = dirSum2([0, 0, 1, 0], dir)
 	$tiles.setPlane(PLANE_XZ, bounds[0], bounds[1], origin[0] + x, y - 1, origin[1] + z, 2)
 	bounds = dirSum2([0, fbounds[1] - 1, 0, 0], dir)
-	$tiles.setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
+	$tiles.setPrism(bounds[0], h, bounds[1], origin[0] + x, y, origin[1] + z, 1)
 	origin = dirSum2([fbounds[0] - 2, 0, 0, 0], dir)
-	$tiles.setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
+	$tiles.setPrism(bounds[0], h, bounds[1], origin[0] + x, y, origin[1] + z, 1)
 	bounds = dirSum2([fbounds[0] + 2, fbounds[1] - 1, 0, 0], dir)
 	origin = dirSum2([0, 0, 2, 0], dir)
-	$"tile-metadata".setPrism(bounds[0], 2, bounds[1], origin[0] + x, y, origin[1] + z, 1)
+	$"tile-metadata".setPrism(bounds[0], h, bounds[1], origin[0] + x, y, origin[1] + z, 1)
 
-func newHooks(disps:Array, vals:Array, x:int, y:int, z:int, dir:int, extras:Array = [[]]):
+func newHooks(disps:Array, vals:Array, x:int, y:int, z:int, dir:int, extras:Array = []):
 	for i in len(disps):
 		var disp = dirSum2(disps[i], dir)
 		var arr2 = [dir]
-		for extra in extras[i]:
-			arr2.append(extra)
+		if len(extras) > i:
+			for extra in extras[i]:
+				arr2.append(extra)
 		genHooks.append([
 			[disp[0] + x, y, disp[1] + z, vals[i]],
 		arr2])
