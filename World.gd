@@ -132,11 +132,12 @@ func genStart(x:int, y:int, z:int, dir:int):
 
 func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
 	var w:int = wid / 5
-	var exclude = [3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+	var exclude = [6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 1, 2, 10]
 	var bounds = dirSum2([2 + w, 6, 0, 0], dir)
 	var origin = dirSum2([0, 0, 1, 0], dir)
 	if not checkArray(prismArray(bounds[0], 3, bounds[1], origin[0] + x, y, origin[1] + z)):
 		exclude.append(1)
+		exclude.append(2)
 		exclude.append(5)
 		exclude.append(10)
 	match roll(20, exclude):
@@ -148,12 +149,12 @@ func genSmallPass(x:int, y:int, z:int, dir:int, wid:int, hknum:int):
 			print("30ft straight, right door")
 			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
 			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
-			newHooks([[2 + w, 4, 0, 0]], [12], x, y, z, (dir + 1) % 4)
+			newHooks([[4, 0, 0, 2 + w]], [6], x, y, z, (dir + 1) % 4)
 		4:
 			print("30ft straight, left door")
 			passageBase([2 + w, 7, 0, 0], x, y, z, dir)
 			newHooks([[0, 6, 0, 0]], [hknum], x, y, z, dir)
-			newHooks([[0, 4, -1, 0]], [12], x, y, z, (dir + 1) % 4) #todo turn dir left somehow, idk
+			newHooks([[0, 0, 4, -1]], [6], x, y, z, (dir + 3) % 4)
 		5:
 			print("20ft straight to door")
 			passageBase([2 + w, 5, 0, 0], x, y, z, dir)
@@ -201,7 +202,7 @@ func gen40pass(x:int, y:int, z:int, dir:int, pillar:int, h:int, gallery:bool):
 #	5: secret
 #will probably only use secret, including others for completion
 func genDoor(x:int, y:int, z:int, dir:int, force:int = 0):
-	pass
+	$"tile-metadata".setSingle(x, y, z, 2)
 
 func genPastDoor(x:int, y:int, z:int, dir:int):
 	pass
@@ -263,6 +264,7 @@ func prismArray(lx:int, ly:int, lz:int, sx:int, sy:int, sz:int) -> Array:
 	return arr
 
 # ----- DIRECTION HANDLING -----
+#i think i fucked something up here somewhere
 
 func forward(amt:int, dir:int) -> Array:
 	match dir:
